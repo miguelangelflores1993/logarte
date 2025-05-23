@@ -12,7 +12,6 @@ import 'package:logarte/src/models/navigation_action.dart';
 class Logarte {
   final String? password;
   final bool ignorePassword;
-  final Function(String data)? onShare;
   final int logBufferLength;
   final Function(BuildContext context)? onRocketLongPressed;
   final Function(BuildContext context)? onRocketDoubleTapped;
@@ -20,7 +19,6 @@ class Logarte {
   Logarte({
     this.password,
     this.ignorePassword = !kReleaseMode,
-    this.onShare,
     this.onRocketLongPressed,
     this.onRocketDoubleTapped,
     this.logBufferLength = 2500,

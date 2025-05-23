@@ -4,6 +4,7 @@ import 'package:logarte/src/console/logarte_theme_wrapper.dart';
 import 'package:logarte/src/extensions/entry_extensions.dart';
 import 'package:logarte/src/extensions/object_extensions.dart';
 import 'package:logarte/src/extensions/string_extensions.dart';
+import 'package:share_plus/share_plus.dart';
 
 class NetworkLogEntryDetailsScreen extends StatelessWidget {
   final NetworkLogarteEntry entry;
@@ -35,7 +36,9 @@ class NetworkLogEntryDetailsScreen extends StatelessWidget {
               icon: const Icon(Icons.share),
               onPressed: () {
                 final text = entry.toString();
-                instance.onShare?.call(text);
+                SharePlus.instance.share(ShareParams(
+                  text: text,
+                ));
               },
             ),
             IconButton(
