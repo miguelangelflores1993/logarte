@@ -51,6 +51,9 @@ final Logarte logarte = Logarte(
       Share.share(content);
     },
 
+    // To have logs in IDE's debug console (default is false)
+    disableDebugConsoleLogs: false,
+
     // Add shortcut actions (optional)
     onRocketLongPressed: (context) {
       // e.g: toggle theme mode
@@ -163,6 +166,21 @@ logarte.database(
   source: 'SharedPreferences',
 );
 ```
+
+### Add custom debug tab
+
+While initializing, you can pass a custom tab widget to the `Logarte` instance. This tab will be shown in the console.
+
+This is useful when you want to add a custom tab to the console, for example, to change the environment, copy device's FCM token, clear local cache, etc.
+
+```dart
+final Logarte logarte = Logarte(
+  ...
+  customTab: const MyCustomTab(),
+  ...
+);
+```
+
 
 ## 🕹️ Example
 

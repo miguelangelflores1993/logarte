@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:logarte/logarte.dart';
 import 'package:share_plus/share_plus.dart';
 
-final logarte = Logarte(
+final Logarte logarte = Logarte(
+  onShare: Share.share,
   password: '1234',
+  customTab: const MyCustomTab(),
   onRocketDoubleTapped: (context) {
     showDialog(
       context: context,
       builder: (context) {
         return const AlertDialog(
-          title: Text(
-            'onRocketDoubleTapped',
-          ),
+          title: Text('onRocketDoubleTapped'),
           content: Text(
             'This callback is useful when you want to quickly access some pages or perform actions without leaving the currently page (toggle theme, change language and etc.).',
           ),
@@ -25,9 +25,7 @@ final logarte = Logarte(
       context: context,
       builder: (context) {
         return const AlertDialog(
-          title: Text(
-            'onRocketLongPressed',
-          ),
+          title: Text('onRocketLongPressed'),
           content: Text(
             'This callback is useful when you want to quickly access some pages or perform actions without leaving the currently page (toggle theme, change language and etc.).',
           ),
@@ -37,9 +35,9 @@ final logarte = Logarte(
   },
 );
 
-enum Environment { dev, staging, prod }
+enum Environment { dev, prod }
 
-const environment = Environment.dev;
+const Environment environment = Environment.dev;
 
 void main() {
   runApp(const App());
@@ -58,9 +56,7 @@ class App extends StatelessWidget {
         useMaterial3: true,
         colorSchemeSeed: Colors.blueGrey.shade900,
       ),
-      navigatorObservers: [
-        LogarteNavigatorObserver(logarte),
-      ],
+      navigatorObservers: [LogarteNavigatorObserver(logarte)],
       home: const HomePage(),
     );
   }
@@ -80,15 +76,9 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    _dio = Dio()
-      ..interceptors.add(
-        LogarteDioInterceptor(logarte),
-      );
+    _dio = Dio()..interceptors.add(LogarteDioInterceptor(logarte));
 
-    logarte.attach(
-      context: context,
-      visible: false,
-    );
+    logarte.attach(context: context, visible: false);
   }
 
   @override
@@ -100,10 +90,8 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Logarte Example'),
-      ),
-      body: Padding(
+      appBar: AppBar(title: const Text('Logarte Example')),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,15 +107,11 @@ class HomePageState extends State<HomePage> {
                 child: const ListTile(
                   leading: Icon(Icons.touch_app_rounded),
                   title: Text('LogarteMagicalTap'),
-                  subtitle: Text(
-                    'Tap 10 times to attach the magical button.',
-                  ),
+                  subtitle: Text('Tap 10 times to attach the magical button.'),
                 ),
               ),
             ),
-            const Divider(
-              height: 40,
-            ),
+            const Divider(height: 40),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -138,37 +122,39 @@ class HomePageState extends State<HomePage> {
                 const SizedBox(height: 12),
                 FilledButton.tonal(
                   onPressed: () async {
-                    await _dio
-                        .get('https://jsonplaceholder.typicode.com/posts');
+                    await _dio.get(
+                      'https://jsonplaceholder.typicode.com/posts',
+                    );
                   },
                   child: const Text('GET'),
                 ),
                 FilledButton.tonal(
                   onPressed: () async {
-                    await _dio
-                        .post('https://jsonplaceholder.typicode.com/posts');
+                    await _dio.post(
+                      'https://jsonplaceholder.typicode.com/posts',
+                    );
                   },
                   child: const Text('POST'),
                 ),
                 FilledButton.tonal(
                   onPressed: () async {
-                    await _dio
-                        .put('https://jsonplaceholder.typicode.com/posts');
+                    await _dio.put(
+                      'https://jsonplaceholder.typicode.com/posts',
+                    );
                   },
                   child: const Text('PUT'),
                 ),
                 FilledButton.tonal(
                   onPressed: () async {
-                    await _dio
-                        .delete('https://jsonplaceholder.typicode.com/posts');
+                    await _dio.delete(
+                      'https://jsonplaceholder.typicode.com/posts',
+                    );
                   },
                   child: const Text('DELETE'),
                 ),
               ],
             ),
-            const Divider(
-              height: 40,
-            ),
+            const Divider(height: 40),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -192,9 +178,7 @@ class HomePageState extends State<HomePage> {
                   onPressed: () {
                     showDialog(
                       context: context,
-                      routeSettings: const RouteSettings(
-                        name: '/test-dialog',
-                      ),
+                      routeSettings: const RouteSettings(name: '/test-dialog'),
                       builder: (BuildContext context) {
                         return const AlertDialog(
                           title: Text('Dialog'),
@@ -230,6 +214,83 @@ class HomePageState extends State<HomePage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class MyCustomTab extends StatefulWidget {
+  const MyCustomTab({super.key});
+
+  @override
+  State<MyCustomTab> createState() => _MyCustomTabState();
+}
+
+class _MyCustomTabState extends State<MyCustomTab> {
+  Environment _environment = environment;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.settings_outlined),
+            title: const Text('Environment'),
+            trailing: DropdownButton<Environment>(
+              padding: EdgeInsets.zero,
+              value: _environment,
+              onChanged: (value) {
+                setState(() {
+                  _environment = value!;
+                });
+              },
+              items: Environment.values.map((e) {
+                return DropdownMenuItem(
+                  value: e,
+                  child: Text(e.name.toUpperCase()),
+                );
+              }).toList(),
+            ),
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.notifications_outlined),
+            title: const Text('FCM token'),
+            subtitle: const Text(
+              'dJkH8Hs9_dKpQm2nLxY:APA91bGj8g_QxL3xJ2K9pQm2nLxYdJkH8Hs9_dKpQm2nLxY',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: TextButton(onPressed: () {}, child: const Text('Copy')),
+          ),
+
+          // Cache size and clear button
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.storage_outlined),
+            title: const Text('Local cache'),
+            subtitle: const Text('100 MB'),
+            trailing: TextButton(
+              onPressed: () {},
+              child: const Text('Clear All'),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+          TextField(
+            controller: TextEditingController(
+              text: 'https://api.example.com/v3/',
+            ),
+            decoration: const InputDecoration(
+              labelText: 'API URL',
+              filled: true,
+            ),
+          ),
+        ],
       ),
     );
   }

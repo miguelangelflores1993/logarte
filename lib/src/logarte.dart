@@ -15,6 +15,8 @@ class Logarte {
   final int logBufferLength;
   final Function(BuildContext context)? onRocketLongPressed;
   final Function(BuildContext context)? onRocketDoubleTapped;
+  final bool disableDebugConsoleLogs;
+  final Widget? customTab;
 
   Logarte({
     this.password,
@@ -22,6 +24,8 @@ class Logarte {
     this.onRocketLongPressed,
     this.onRocketDoubleTapped,
     this.logBufferLength = 2500,
+    this.disableDebugConsoleLogs = false,
+    this.customTab,
   });
 
   final logs = ValueNotifier(<LogarteEntry>[]);
@@ -117,11 +121,13 @@ class Logarte {
     String? source,
     StackTrace? stackTrace,
   }) {
-    developer.log(
-      message.toString(),
-      name: 'logarte',
-      stackTrace: stackTrace,
-    );
+    if (!disableDebugConsoleLogs) {
+      developer.log(
+        message.toString(),
+        name: 'logarte',
+        stackTrace: stackTrace,
+      );
+    }
 
     if (write) {
       _add(
