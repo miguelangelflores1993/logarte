@@ -1,10 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:logarte/logarte.dart';
-import 'package:share_plus/share_plus.dart';
 
 final Logarte logarte = Logarte(
-  onShare: Share.share,
   password: '1234',
   customTab: const MyCustomTab(),
   onRocketDoubleTapped: (context) {
